@@ -1,0 +1,55 @@
+<%- include('../partials/header') %>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-7">
+    <div class="form-card">
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger"><%= error %></div>
+      <% } %>
+      <form method="POST" action="/returns">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">المنتج <span class="text-danger">*</span></label>
+            <select name="product_id" class="form-select" required>
+              <option value="">اختر منتج...</option>
+              <% products.forEach(p => { %>
+              <option value="<%= p.id %>"><%= p.name %> (<%= p.code %>)</option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">المخزن <span class="text-danger">*</span></label>
+            <select name="warehouse_id" class="form-select" required>
+              <% warehouses.forEach(w => { %>
+              <option value="<%= w.id %>"><%= w.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">الكمية المرتجعة <span class="text-danger">*</span></label>
+            <input type="number" name="quantity" class="form-control" min="1" value="1" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label">الفاتورة المرتبطة (اختياري)</label>
+            <select name="invoice_id" class="form-select">
+              <option value="">-- بدون فاتورة --</option>
+              <% invoices.forEach(i => { %>
+              <option value="<%= i.id %>"><%= i.invoice_number %> - <%= i.customer_name || 'نقدي' %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">سبب الإرجاع</label>
+            <textarea name="reason" class="form-control" rows="2" placeholder="اختياري..."></textarea>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>تسجيل المرتجع</button>
+          <a href="/returns" class="btn btn-outline-secondary">إلغاء</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

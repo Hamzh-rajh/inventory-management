@@ -1,0 +1,48 @@
+<%- include('../partials/header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <form class="d-flex gap-2">
+    <select name="type" class="form-select form-select-sm" onchange="this.form.submit()">
+      <option value="" <%= type==='' ? 'selected':'' %>>كل الأنواع</option>
+      <option value="cash" <%= type==='cash' ? 'selected':'' %>>نقدي</option>
+      <option value="credit" <%= type==='credit' ? 'selected':'' %>>آجل</option>
+    </select>
+    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+      <option value="" <%= status==='' ? 'selected':'' %>>كل الحالات</option>
+      <option value="paid" <%= status==='paid' ? 'selected':'' %>>مدفوع</option>
+      <option value="unpaid" <%= status==='unpaid' ? 'selected':'' %>>غير مدفوع</option>
+      <option value="partial" <%= status==='partial' ? 'selected':'' %>>جزئي</option>
+    </select>
+  </form>
+  <a href="/invoices/new" class="btn btn-primary"><i class="bi bi-plus-lg"></i> فاتورة جديدة</a>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr><th>رقم الفاتورة</th><th>النوع</th><th>العميل</th><th>المخزن</th><th>الإجمالي</th><th>المدفوع</th><th>الحالة</th><th>التاريخ</th><th></th></tr>
+      </thead>
+      <tbody>
+        <% if (invoices.length === 0) { %>
+        <tr><td colspan="9" class="text-center py-4 text-muted">لا توجد فواتير</td></tr>
+        <% } %>
+        <% invoices.forEach(i => { %>
+        <tr>
+          <td><a href="/invoices/<%= i.id %>" class="fw-bold text-decoration-none"><%= i.invoice_number %></a></td>
+          <td><span class="badge badge-<%= i.type %>"><%= i.type === 'cash' ? 'نقدي' : 'آجل' %></span></td>
+          <td><%= i.customer_name || '-' %></td>
+          <td><small><%= i.warehouse_name %></small></td>
+          <td><strong><%= i.total.toFixed(2) %></strong></td>
+          <td><%= i.paid.toFixed(2) %></td>
+          <td><span class="badge badge-<%= i.status %>"><%= i.status === 'paid' ? 'مدفوع' : i.status === 'partial' ? 'جزئي' : 'غير مدفوع' %></span></td>
+          <td><small><%= new Date(i.created_at).toLocaleDateString('ar-SA') %></small></td>
+          <td><a href="/invoices/<%= i.id %>" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: inventory-app
+    env: node
+    buildCommand: npm install
+    startCommand: node app.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_PATH
+        value: /opt/render/project/src/inventory.db
+    disk:
+      name: inventory-db
+      mountPath: /opt/render/project/src
+      sizeGB: 1

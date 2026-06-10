@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="text-muted small">إجمالي المرتجعات: <strong><%= returns.length %></strong></div>
+  <a href="/returns/new" class="btn btn-primary"><i class="bi bi-plus-lg"></i> تسجيل مرتجع</a>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr><th>المنتج</th><th>الكمية</th><th>المخزن</th><th>الفاتورة</th><th>السبب</th><th>التاريخ</th></tr>
+      </thead>
+      <tbody>
+        <% if (returns.length === 0) { %>
+        <tr><td colspan="6" class="text-center py-4 text-muted">لا توجد مرتجعات</td></tr>
+        <% } %>
+        <% returns.forEach(r => { %>
+        <tr>
+          <td><strong><%= r.product_name %></strong><br><small class="text-muted"><%= r.code %></small></td>
+          <td><span class="badge bg-warning text-dark"><%= r.quantity %></span></td>
+          <td><%= r.warehouse_name %></td>
+          <td><% if(r.invoice_number) { %><a href="/invoices/<%= r.invoice_id %>"><%= r.invoice_number %></a><% } else { %><span class="text-muted">-</span><% } %></td>
+          <td><%= r.reason || '-' %></td>
+          <td><small><%= new Date(r.created_at).toLocaleDateString('ar-SA') %></small></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

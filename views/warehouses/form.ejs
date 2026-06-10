@@ -1,0 +1,26 @@
+<%- include('../partials/header') %>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-6">
+    <div class="form-card">
+      <form method="POST" action="<%= warehouse ? `/warehouses/${warehouse.id}?_method=PUT` : '/warehouses' %>">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">اسم المخزن <span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control" required value="<%= warehouse?.name || '' %>">
+          </div>
+          <div class="col-12">
+            <label class="form-label">الموقع</label>
+            <input type="text" name="location" class="form-control" value="<%= warehouse?.location || '' %>">
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>حفظ</button>
+          <a href="/warehouses" class="btn btn-outline-secondary">إلغاء</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

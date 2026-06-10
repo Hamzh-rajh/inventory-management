@@ -1,0 +1,57 @@
+<%- include('../partials/header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <form class="d-flex gap-2" method="get">
+      <input type="text" name="search" value="<%= search %>" class="form-control" placeholder="بحث بالاسم أو الكود..." style="width:250px">
+      <button class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+    </form>
+  </div>
+  <a href="/products/new" class="btn btn-primary"><i class="bi bi-plus-lg"></i> إضافة منتج</a>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>الكود</th><th>الاسم</th><th>الوحدة</th>
+          <th>سعر الشراء</th><th>سعر البيع</th>
+          <th>الكمية الإجمالية</th><th>الحد الأدنى</th><th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (products.length === 0) { %>
+        <tr><td colspan="8" class="text-center py-4 text-muted">لا توجد منتجات</td></tr>
+        <% } %>
+        <% products.forEach(p => { %>
+        <tr class="<%= p.total_qty <= p.min_quantity ? 'low-stock-row' : '' %>">
+          <td><code><%= p.code %></code></td>
+          <td><strong><%= p.name %></strong><% if(p.description){ %><br><small class="text-muted"><%= p.description %></small><% } %></td>
+          <td><%= p.unit %></td>
+          <td><%= parseFloat(p.purchase_price).toFixed(2) %></td>
+          <td><%= parseFloat(p.sell_price).toFixed(2) %></td>
+          <td>
+            <% if (p.total_qty <= p.min_quantity) { %>
+              <span class="badge badge-low"><i class="bi bi-exclamation-triangle"></i> <%= p.total_qty %></span>
+            <% } else { %>
+              <strong><%= p.total_qty %></strong>
+            <% } %>
+          </td>
+          <td><%= p.min_quantity %></td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="/products/<%= p.id %>/edit" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+              <form method="POST" action="/products/<%= p.id %>?_method=DELETE" onsubmit="return confirmDelete(this)">
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

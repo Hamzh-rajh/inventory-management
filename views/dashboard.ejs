@@ -1,0 +1,106 @@
+<%- include('partials/header') %>
+
+<div class="row g-4 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="d-flex align-items-center gap-3">
+        <div class="stat-icon" style="background:#dbeafe"><i class="bi bi-box text-primary fs-5"></i></div>
+        <div><div class="text-muted small">المنتجات</div><div class="fw-bold fs-3"><%= totalProducts %></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="d-flex align-items-center gap-3">
+        <div class="stat-icon" style="background:#dcfce7"><i class="bi bi-people text-success fs-5"></i></div>
+        <div><div class="text-muted small">العملاء</div><div class="fw-bold fs-3"><%= totalCustomers %></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="d-flex align-items-center gap-3">
+        <div class="stat-icon" style="background:#fef3c7"><i class="bi bi-cash text-warning fs-5"></i></div>
+        <div><div class="text-muted small">إجمالي المبيعات</div><div class="fw-bold fs-5"><%= totalSales.toFixed(2) %></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="d-flex align-items-center gap-3">
+        <div class="stat-icon" style="background:#fee2e2"><i class="bi bi-exclamation-circle text-danger fs-5"></i></div>
+        <div><div class="text-muted small">مستحقات غير محصلة</div><div class="fw-bold fs-5 text-danger"><%= unpaidAmount.toFixed(2) %></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-12 col-lg-6">
+    <div class="table-card">
+      <div class="p-3 border-bottom d-flex align-items-center gap-2">
+        <i class="bi bi-exclamation-triangle text-warning"></i>
+        <strong>تنبيهات المخزون المنخفض</strong>
+      </div>
+      <% if (lowStock.length === 0) { %>
+        <div class="p-4 text-center text-muted">
+          <i class="bi bi-check-circle text-success fs-3 d-block mb-2"></i>
+          لا توجد منتجات منخفضة المخزون
+        </div>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="table table-sm mb-0">
+            <thead><tr><th>المنتج</th><th>الكمية</th><th>الحد الأدنى</th><th>المخزن</th></tr></thead>
+            <tbody>
+              <% lowStock.forEach(p => { %>
+              <tr class="low-stock-row">
+                <td><span class="badge bg-danger me-1">!</span><%= p.name %></td>
+                <td><strong class="text-danger"><%= p.quantity %></strong></td>
+                <td><%= p.min_quantity %></td>
+                <td><small><%= p.warehouse %></small></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="table-card">
+      <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-receipt text-primary"></i>
+          <strong>آخر الفواتير</strong>
+        </div>
+        <a href="/invoices/new" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i> فاتورة جديدة</a>
+      </div>
+      <% if (recentInvoices.length === 0) { %>
+        <div class="p-4 text-center text-muted">لا توجد فواتير بعد</div>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="table table-sm mb-0">
+            <thead><tr><th>رقم الفاتورة</th><th>العميل</th><th>المبلغ</th><th>الحالة</th></tr></thead>
+            <tbody>
+              <% recentInvoices.forEach(i => { %>
+              <tr>
+                <td><a href="/invoices/<%= i.id %>" class="text-decoration-none"><%= i.invoice_number %></a></td>
+                <td><%= i.customer_name || 'نقدي' %></td>
+                <td><%= i.total.toFixed(2) %></td>
+                <td>
+                  <span class="badge badge-<%= i.status %>">
+                    <%= i.status === 'paid' ? 'مدفوع' : i.status === 'partial' ? 'جزئي' : 'غير مدفوع' %>
+                  </span>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

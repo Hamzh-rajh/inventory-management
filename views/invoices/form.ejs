@@ -1,0 +1,123 @@
+<%- include('../partials/header') %>
+
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-2"></i><%= error %></div>
+<% } %>
+
+<form method="POST" action="/invoices" id="invoice-form">
+  <div class="row g-4">
+    <!-- Header info -->
+    <div class="col-12 col-lg-8">
+      <div class="form-card mb-4">
+        <h6 class="mb-3 fw-bold"><i class="bi bi-info-circle me-2"></i>بيانات الفاتورة</h6>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">رقم الفاتورة</label>
+            <input type="text" name="invoice_number" class="form-control" value="<%= invoiceNumber %>" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">نوع الفاتورة</label>
+            <select name="type" class="form-select" required>
+              <option value="cash">نقدي</option>
+              <option value="credit">آجل</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">المخزن</label>
+            <select name="warehouse_id" class="form-select" required id="warehouse-select">
+              <% warehouses.forEach(w => { %>
+              <option value="<%= w.id %>"><%= w.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">العميل (اختياري)</label>
+            <select name="customer_id" class="form-select">
+              <option value="">-- بدون عميل --</option>
+              <% customers.forEach(c => { %>
+              <option value="<%= c.id %>"><%= c.name %> (<%= c.phone || '' %>)</option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">ملاحظات</label>
+            <input type="text" name="notes" class="form-control" placeholder="ملاحظات اختيارية...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Items -->
+      <div class="form-card">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h6 class="mb-0 fw-bold"><i class="bi bi-list-ul me-2"></i>المنتجات</h6>
+          <button type="button" class="btn btn-sm btn-success" onclick="addItem()">
+            <i class="bi bi-plus-lg"></i> إضافة منتج
+          </button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm" id="items-table">
+            <thead>
+              <tr>
+                <th style="min-width:200px">المنتج</th>
+                <th style="width:100px">الكمية</th>
+                <th style="width:110px">السعر</th>
+                <th style="width:100px">الإجمالي</th>
+                <th style="width:40px"></th>
+              </tr>
+            </thead>
+            <tbody id="items-body"></tbody>
+          </table>
+        </div>
+        <template id="item-template">
+          <tr class="item-row">
+            <td>
+              <select class="form-select form-select-sm" data-name="product_id" required onchange="onProductSelect(this)">
+                <option value="">اختر منتج...</option>
+                <% products.forEach(p => { %>
+                <option value="<%= p.id %>" data-price="<%= p.sell_price %>" data-stock="<%= p.stock_qty || 0 %>" data-warehouse="<%= p.warehouse_id %>">
+                  <%= p.name %> (<%= p.code %>)
+                </option>
+                <% }) %>
+              </select>
+              <small class="text-muted item-stock"></small>
+            </td>
+            <td><input type="number" class="form-control form-control-sm item-qty" data-name="quantity" min="1" value="1" required oninput="updateTotal()"></td>
+            <td><input type="number" step="0.01" class="form-control form-control-sm item-price" data-name="price" value="0" required oninput="updateTotal()"></td>
+            <td><span class="item-subtotal fw-bold">0.00</span></td>
+            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItem(this)"><i class="bi bi-x"></i></button></td>
+          </tr>
+        </template>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="col-12 col-lg-4">
+      <div class="form-card sticky-top" style="top:80px">
+        <h6 class="mb-3 fw-bold"><i class="bi bi-calculator me-2"></i>ملخص الفاتورة</h6>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">إجمالي الفاتورة:</span>
+          <strong class="fs-5" id="invoice-total">0.00</strong>
+        </div>
+        <hr>
+        <div class="mb-3">
+          <label class="form-label">المبلغ المدفوع</label>
+          <input type="number" step="0.01" name="paid" class="form-control" value="0" placeholder="0.00">
+          <small class="text-muted">اترك 0 للفاتورة الآجلة</small>
+        </div>
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="bi bi-check-lg me-2"></i>حفظ الفاتورة
+          </button>
+          <a href="/invoices" class="btn btn-outline-secondary">إلغاء</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+// Add first item on load
+window.addEventListener('DOMContentLoaded', () => addItem());
+</script>
+
+<%- include('../partials/footer') %>

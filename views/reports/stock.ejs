@@ -1,0 +1,67 @@
+<%- include('../partials/header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4 no-print">
+  <form class="d-flex gap-2">
+    <select name="warehouse_id" class="form-select" onchange="this.form.submit()">
+      <option value="">كل المخازن</option>
+      <% warehouses.forEach(w => { %>
+      <option value="<%= w.id %>" <%= warehouse_id == w.id ? 'selected' : '' %>><%= w.name %></option>
+      <% }) %>
+    </select>
+  </form>
+  <button class="btn btn-outline-primary" onclick="window.print()"><i class="bi bi-printer me-1"></i>طباعة</button>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card text-center">
+      <div class="text-muted small">إجمالي الأصناف</div>
+      <div class="fw-bold fs-4"><%= stock.length %></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card text-center">
+      <div class="text-muted small">قيمة المخزون</div>
+      <div class="fw-bold fs-5"><%= totalValue.toFixed(2) %></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card text-center">
+      <div class="text-muted small">منخفض المخزون</div>
+      <div class="fw-bold fs-4 text-danger"><%= stock.filter(s => s.low_stock).length %></div>
+    </div>
+  </div>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr><th>الكود</th><th>المنتج</th><th>الوحدة</th><th>المخزن</th><th>الكمية</th><th>الحد الأدنى</th><th>سعر البيع</th><th>القيمة</th><th>الحالة</th></tr>
+      </thead>
+      <tbody>
+        <% stock.forEach(s => { %>
+        <tr class="<%= s.low_stock ? 'low-stock-row' : '' %>">
+          <td><code><%= s.code %></code></td>
+          <td><strong><%= s.name %></strong></td>
+          <td><%= s.unit %></td>
+          <td><%= s.warehouse_name %></td>
+          <td><strong><%= s.quantity %></strong></td>
+          <td><%= s.min_quantity %></td>
+          <td><%= parseFloat(s.sell_price).toFixed(2) %></td>
+          <td><%= s.total_value.toFixed(2) %></td>
+          <td>
+            <% if (s.low_stock) { %>
+              <span class="badge badge-low"><i class="bi bi-exclamation-triangle"></i> منخفض</span>
+            <% } else { %>
+              <span class="badge" style="background:#dcfce7;color:#166534"><i class="bi bi-check-circle"></i> جيد</span>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

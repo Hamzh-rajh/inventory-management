@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+
+<div class="d-flex justify-content-end mb-4">
+  <a href="/customers/new" class="btn btn-primary"><i class="bi bi-plus-lg"></i> إضافة عميل</a>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>الاسم</th><th>الهاتف</th><th>العنوان</th><th>الرصيد المستحق</th><th></th></tr></thead>
+      <tbody>
+        <% if (customers.length === 0) { %>
+        <tr><td colspan="5" class="text-center py-4 text-muted">لا يوجد عملاء</td></tr>
+        <% } %>
+        <% customers.forEach(c => { %>
+        <tr>
+          <td><a href="/customers/<%= c.id %>" class="fw-bold text-decoration-none"><%= c.name %></a></td>
+          <td><%= c.phone || '-' %></td>
+          <td><%= c.address || '-' %></td>
+          <td><% if (c.balance > 0) { %><span class="text-danger fw-bold"><%= c.balance.toFixed(2) %></span><% } else { %><span class="text-success">0.00</span><% } %></td>
+          <td>
+            <a href="/customers/<%= c.id %>/edit" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
